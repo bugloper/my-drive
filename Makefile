@@ -4,4 +4,7 @@ reset:
 dev:
 	npx prisma migrate dev --schema=src/prisma/schema.prisma
 
-.PHONY: reset dev
+seed:
+	find seeds -name "*.js" -exec node {} \;
+
+.PHONY: reset dev seed
