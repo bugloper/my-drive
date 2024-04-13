@@ -31,15 +31,26 @@ async function seed() {
         },
       });
 
-      for (let j = 0; j < 100000; j++) {
+      for (let j = 0; j < 1000; j++) {
         let childName = faker.person.fullName();
         console.log(`${j} creating subfolder: ${childName} for ${parentName}`);
 
-        await prisma.folder.create({
+        const childFolder = await prisma.folder.create({
           data: {
             name: childName,
             userId: user.id,
             parentId: mainFolder.id,
+          },
+        });
+
+        const grandChildName = faker.person.fullName();
+        console.log(`${j} creating grandchild folder: ${grandChildName} for ${childName}`);
+
+        await prisma.folder.create({
+          data: {
+            name: grandChildName,
+            userId: user.id,
+            parentId: childFolder.id,
           },
         });
       }

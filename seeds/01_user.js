@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const hashPassword = require("../utils/password.hasher");
+const hashPassword = require("../src/utils/password.hasher");
 
 async function seed() {
   try {

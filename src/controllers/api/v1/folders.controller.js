@@ -36,10 +36,36 @@ router.put("/api/v1/folders/:id", async (req, res) => {
   }
 });
 
-// Get all folders
+// N + 1 Problem
 router.get("/api/v1/folders", async (req, res) => {
   try {
+    // 1 part of the equation
     const folders = await prisma.folder.findMany();
+    const foldersWithDetails = [];
+
+    // n part of the equation: Round trip DB server for each folder's child folders
+    for (const folder of folders) {
+      const childrenFolders = await prisma.folder.findMany({
+        where: { parentId: folder.id }
+      });
+      foldersWithDetails.push({ ...folder, childrenFolders });
+    }
+
+    res.status(200).json(foldersWithDetails);
+  } catch (error) {
+    console.error('Error retrieving folders:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// N + 1 Problem Solved
+router.get("/api/v2/folders", async (req, res) => {
+  try {
+    // 1 part of the equation: Eager 
+    const folders = await prisma.folder.findMany({
+      include: { folders: true, files: true },
+    });
+
     res.status(200).json(folders);
   } catch (error) {
     console.error('Error retrieving folders:', error);
@@ -59,11 +85,11 @@ router.get("/api/v1/folders/:id/children", async (req, res) => {
 
     if (folder) {
       try {
-        const childrenFolders = await prisma.folder.findMany({  //Children folders
+        const childrenFolders = await prisma.folder.findMany({
           where: { parentId: folderID }
         });
 
-        if (childrenFolders.length > 0) { //As findMany will always return an array
+        if (childrenFolders.length > 0) {
           res.status(200).json(childrenFolders);
         } else {
           res.status(404).json({ message: `No Folders inside parent folder with ID ${folderID}` });
