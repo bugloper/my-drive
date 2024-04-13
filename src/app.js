@@ -25,7 +25,7 @@ app.get("/", (_req, res) => { //Route handler for the root path.
 const authController = require('./controllers/api/v1/auths.controller');
 app.use('', authController);
 
-app.use(currentUser); //Middleware
+// app.use(currentUser); //Middleware
 
 const folderController = require('./controllers/api/v1/folders.controller');
 app.use('', folderController);

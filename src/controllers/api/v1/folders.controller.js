@@ -39,9 +39,11 @@ router.put("/api/v1/folders/:id", async (req, res) => {
 // N + 1 Problem
 router.get("/api/v1/folders", async (req, res) => {
   try {
+    // 1 part of the equation
     const folders = await prisma.folder.findMany();
     const foldersWithDetails = [];
 
+    // n part of the equation: Round trip DB server for each folder's child folders
     for (const folder of folders) {
       const childrenFolders = await prisma.folder.findMany({
         where: { parentId: folder.id }
@@ -54,12 +56,12 @@ router.get("/api/v1/folders", async (req, res) => {
     console.error('Error retrieving folders:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-
 });
 
 // N + 1 Problem Solved
 router.get("/api/v2/folders", async (req, res) => {
   try {
+    // 1 part of the equation: Eager 
     const folders = await prisma.folder.findMany({
       include: { folders: true, files: true },
     });
