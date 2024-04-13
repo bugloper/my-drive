@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 
 //Post /files
-router.post('/files', async (req, res) => {
+router.post('/api/v1/files', async (req, res) => {
     try {
         const createdFile = await prisma.file.create({
             data: { ...req.body }
@@ -24,7 +24,7 @@ router.post('/files', async (req, res) => {
 })
 
 //Put /files
-router.put('/files/:id', async (req, res) => {
+router.put('/api/v1/files/:id', async (req, res) => {
     const fileId = parseInt(req.params.id)
     try {
         const updatedFile = await prisma.file.update({
@@ -43,7 +43,7 @@ router.put('/files/:id', async (req, res) => {
 })
 
 //Get /files
-router.get('/files', async (req, res) => {
+router.get('/api/v1/files', async (req, res) => {
     try {
         const file = await prisma.file.findMany();
         res.status(200).json(file)
@@ -55,7 +55,7 @@ router.get('/files', async (req, res) => {
 })
 
 //Get specific /files
-router.get('/files/:id', async (req, res) => {
+router.get('/api/v1/files/:id', async (req, res) => {
     const fileId = parseInt(req.params.id);
     try {
         const specificFile = await prisma.file.findUnique({
@@ -75,7 +75,7 @@ router.get('/files/:id', async (req, res) => {
 })
 
 //Delete /files
-router.delete("/files/:id", async (req, res) => {
+router.delete("/api/v1/files/:id", async (req, res) => {
     const fileId = parseInt(req.params.id);
     try {
         await prisma.file.delete({

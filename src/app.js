@@ -23,17 +23,20 @@ app.get("/", (_req, res) => { //Route handler for the root path.
   )
 });
 
-// Routers
-const authRouter = require('./routers/auth.router');
-app.use('', authRouter);
+// Controllers
+const authController = require('./controllers/api/v1/auths.controller');
+app.use('', authController);
 
 app.use(currentUser); //Middleware
 
-const folderRouter = require('./routers/folder.router');
-app.use('', folderRouter);
+const folderController = require('./controllers/api/v1/folders.controller');
+app.use('', folderController);
 
-const fileRouter = require('./routers/file.router');
-app.use('', fileRouter);
+const rootController = require('./controllers/api/v1/roots.controller');
+app.use('', rootController);
+
+const fileController = require('./controllers/api/v1/files.controller');
+app.use('', fileController);
 
 app.listen(port, () => {
   console.log(`App is listening on: http://localhost:${port}`);

@@ -4,7 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // Create a new folder
-router.post("/folders", async (req, res) => {
+router.post("/api/v1/folders", async (req, res) => {
   try {
     const createdFolder = await prisma.folder.create({
       data: { userId: req.userInfo.id, ...req.body }
@@ -17,7 +17,7 @@ router.post("/folders", async (req, res) => {
 });
 
 // Update an existing folder
-router.put("/folders/:id", async (req, res) => {
+router.put("/api/v1/folders/:id", async (req, res) => {
   const folderId = parseInt(req.params.id);
   try {
     const updatedFolder = await prisma.folder.update({
@@ -37,7 +37,7 @@ router.put("/folders/:id", async (req, res) => {
 });
 
 // Get all folders
-router.get("/folders", async (req, res) => {
+router.get("/api/v1/folders", async (req, res) => {
   try {
     const folders = await prisma.folder.findMany();
     res.status(200).json(folders);
@@ -48,7 +48,7 @@ router.get("/folders", async (req, res) => {
 });
 
 // Get children folders inside parent
-router.get("/folders/:id/children", async (req, res) => {
+router.get("/api/v1/folders/:id/children", async (req, res) => {
   const folderID = parseInt(req.params.id);
   try {
     const folder = await prisma.folder.findUnique({
@@ -83,7 +83,7 @@ router.get("/folders/:id/children", async (req, res) => {
 });
 
 // Get specific folder by ID
-router.get("/folders/:id", async (req, res) => {
+router.get("/api/v1/folders/:id", async (req, res) => {
   const folderId = parseInt(req.params.id);
   try {
     const folder = await prisma.folder.findUnique({
@@ -104,7 +104,7 @@ router.get("/folders/:id", async (req, res) => {
 });
 
 // Delete a folder by ID
-router.delete("/folders/:id", async (req, res) => {
+router.delete("/api/v1/folders/:id", async (req, res) => {
   const folderId = parseInt(req.params.id);
   try {
     await prisma.folder.delete({
@@ -121,7 +121,7 @@ router.delete("/folders/:id", async (req, res) => {
 
 
 // Get files inside folder
-router.get("/folders/:id/files", async (req, res) => {
+router.get("/api/v1/folders/:id/files", async (req, res) => {
   const folderID = parseInt(req.params.id);
   try {
     const folder = await prisma.folder.findUnique({
