@@ -1,12 +1,12 @@
-
 const redis = require('redis');
-const REDIS_PORT = 6379; // Redis port number
-const client = redis.createClient({ port: REDIS_PORT });
 
-client.on('connect', () => {
-    console.log('Connected to Redis');
+const client = redis.createClient({
+    host: 'localhost',
+    port: 6379
 });
-(async () => {
-    await client.connect();
-})();
+
+client.on('error', (err) => {
+    console.error('Redis Client Error', err);
+});
+
 module.exports = client;

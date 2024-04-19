@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 const hashPassword = require("../../../utils/password.hasher");
 const bcrypt = require('bcrypt');
 const session = require('express-session');
-const secureRandom = require('../../../utils/secure.random')
+const secureRandom = require('../../../utils/secure.random');
+const redis = require('../../../utils/redis.client');
+const prisma = require('../../../utils/prisma.client');
+
 // Middlewares
 router.use(session({
   secret: 'very-secure-secret', // a secret string used to sign the session ID cookie
@@ -13,12 +14,11 @@ router.use(session({
   saveUninitialized: false, // don't create session until something stored
 }));
 
-const redisClient = require('../../../utils/redis.client')
 
 // Register a new user
 router.post("/api/v1/register", async (req, res) => {
   console.log("req.demo", req.demo)
-  try { 
+  try {
     // Grab email, name, password from req.body
     const { email, name, password } = req.body;
     // Hash password
@@ -58,7 +58,7 @@ router.post("/api/v1/login", async (req, res) => {
         const sessionId = secureRandom.randomString();
         res.cookie("_my_drive_session", sessionId);
         try {
-          await redisClient.setEx(sessionId, 3600, JSON.stringify(userInfo)); // Caching in Redis
+          await redis.setEx(sessionId, 3600, JSON.stringify(userInfo)); // Caching in Redis
           console.log("Redis setEx successful");
         } catch (redisError) {
           console.error("Redis setEx error:", redisError);
