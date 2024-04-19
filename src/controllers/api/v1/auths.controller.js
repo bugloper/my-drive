@@ -17,7 +17,6 @@ router.use(session({
 
 // Register a new user
 router.post("/api/v1/register", async (req, res) => {
-  console.log("req.demo", req.demo)
   try {
     // Grab email, name, password from req.body
     const { email, name, password } = req.body;
