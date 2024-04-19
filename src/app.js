@@ -1,31 +1,25 @@
-const express = require("express"); //Import express module
-const app = express();  //create a new express app.
-
+const express = require("express");
 const bodyParser = require("body-parser");
-const currentUser = require('./middlewares/current.user');
-const redisClient = require('./utils/redis.client');
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
+const app = express();
 
-const port = 4000;
-
-// Middlewares 
+// Middlewares
 app.use(bodyParser.json());
-app.use(cookieParser()); 
+app.use(cookieParser());
 
 // ROOT index.html
-const path = require("path"); //Import path module which is used to join paths
-app.get("/", (_req, res) => { //Route handler for the root path.
-  res.sendFile(               //sends index.html as the response using sendFile() method.
-    path.join(__dirname, "public", "index.html")
-  )
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Controllers
 const authController = require('./controllers/api/v1/auths.controller');
 app.use('', authController);
 
-// app.use(currentUser); //Middleware
+const currentUser = require('./middlewares/current.user');
+app.use(currentUser);
 
 const folderController = require('./controllers/api/v1/folders.controller');
 app.use('', folderController);
@@ -36,11 +30,4 @@ app.use('', rootController);
 const fileController = require('./controllers/api/v1/files.controller');
 app.use('', fileController);
 
-app.listen(port, () => {
-  console.log(`App is listening on: http://localhost:${port}`);
-})
-
-process.on('SIGINT', () => {
-  redisClient.quit();
-  process.exit();
-});
+module.exports = app;
